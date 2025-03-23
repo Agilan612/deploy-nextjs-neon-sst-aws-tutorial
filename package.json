@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "sst bind next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "sst deploy --stage production"
   },
   "dependencies": {
     "next": "15.2.3",
@@ -16,8 +17,17 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.0.15",
+    "autoprefixer": "^10.4.21",
+    "aws-cdk-lib": "2.142.1",
+    "constructs": "10.3.0",
     "eslint": "^9.23.0",
     "eslint-config-next": "15.2.3",
+    "sst": "^2.48.1",
     "tailwindcss": "^4.0.15"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "aws-sdk"
+    ]
   }
 }
