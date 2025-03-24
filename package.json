@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "deployStaging": "sst deploy --stage staging",
     "deploy": "sst deploy --stage production"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
     "next": "15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

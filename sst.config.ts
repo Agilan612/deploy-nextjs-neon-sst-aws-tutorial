@@ -1,5 +1,5 @@
 import { SSTConfig } from "sst";
-import { NextjsSite } from "sst/constructs";
+import { Config, NextjsSite } from "sst/constructs";
 
 export default {
   config(_input) {
@@ -10,8 +10,11 @@ export default {
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
-      const site = new NextjsSite(stack, "site");
-
+      const DATABASE_URL = new Config.Secret(stack, "DATABASE_URL");
+      const SECRET_VAL = new Config.Secret(stack, "SECRET_VAL");
+      const site = new NextjsSite(stack, "site", {
+        bind: [DATABASE_URL, SECRET_VAL], 
+      });
       stack.addOutputs({
         SiteUrl: site.url,
       });
