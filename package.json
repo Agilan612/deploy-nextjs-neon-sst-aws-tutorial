@@ -2,30 +2,39 @@
   "name": "leads-landing",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "sst bind next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "generate": "pnpm drizzle-kit generate --config=drizzle.config.js",
+    "migrate": "tsx src/app/cli/migrator.js",
     "deployStaging": "sst deploy --stage staging",
     "deploy": "sst deploy --stage production"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
+    "drizzle-kit": "^0.30.5",
     "next": "15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@aws-sdk/client-ssm": "^3.772.0",
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.0.15",
     "autoprefixer": "^10.4.21",
     "aws-cdk-lib": "2.142.1",
+    "aws-sdk": "^2.1692.0",
     "constructs": "10.3.0",
+    "drizzle-orm": "^0.41.0",
     "eslint": "^9.23.0",
     "eslint-config-next": "15.2.3",
     "sst": "^2.48.1",
-    "tailwindcss": "^4.0.15"
+    "tailwindcss": "^4.0.15",
+    "tsx": "^4.19.3",
+    "ws": "^8.18.1"
   },
   "pnpm": {
     "ignoredBuiltDependencies": [
