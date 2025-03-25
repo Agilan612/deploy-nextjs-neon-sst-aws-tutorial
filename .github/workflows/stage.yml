@@ -1,0 +1,70 @@
+name: Staging Deploy via SST to AWS
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+      - "master"
+    paths:
+      - "src/**"
+      - "*.json"
+      - "*.yaml"
+      - "*.json"
+      - "*.config.js"
+      - "*.config.ts"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - name: Cache Next.js Build
+        uses: actions/cache@v3
+        with:
+          path: |
+            .next/cache/
+            .open-next/
+            .sst/
+          key: cache-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]xs') }}
+          restore-keys: |
+            cache-${{ hashFiles('**/pnpm-lock.yaml') }}-
+      - name: Install Pnpm
+        run: npm install -g pnpm
+      
+      - name: Install projects deps
+        run: pnpm install
+      
+      - name: Install AWS Creds
+        run: |
+          mkdir -p ~/.aws
+          echo "[default]" > ~/.aws/credentials
+          echo "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials
+          echo "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+
+      - name: Set SST Config Secret
+        run: |
+          npx sst secrets set DATABASE_URL '${{ secrets.DATABASE_URL_STAGING }}' --stage staging
+          npx sst secrets set SECRET_VAL '${{ github.sha }}' --stage staging
+          npx sst secrets set COMMIT_SHA '${{ github.sha }}' --stage staging
+      
+      - name: Run Staging DB migrations
+        run: |
+          STAGE=staging npx tsx src/app/cli/migrator.js
+        
+      - name: Deploy to AWS with SST
+        run: pnpm run deployStaging
+
+      - name: Clean Up AWS Profile
+        run: |
+          rm -rf ~/.aws
+
+      - name: Create Pull Request to Production
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run:
+          gh pr create --base production --head main --title "Auto- ${{ github.event.head_commit.message }}" --body "Auto PR from Stage Release"
