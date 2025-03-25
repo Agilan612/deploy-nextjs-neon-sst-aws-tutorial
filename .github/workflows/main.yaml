@@ -5,6 +5,10 @@ name: Deploy via SST to AWS
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "main"
+      - "master"
 
 jobs:
   build:
