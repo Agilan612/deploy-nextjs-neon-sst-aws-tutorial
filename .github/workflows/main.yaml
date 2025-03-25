@@ -9,6 +9,14 @@ on:
     branches:
       - "main"
       - "master"
+    paths:
+      - ".github/workflows/main.yaml"
+      - "src/**"
+      - "*.json"
+      - "*.yaml"
+      - "*.json"
+      - "*.config.js"
+      - "*.config.ts"
 
 jobs:
   build:
@@ -26,10 +34,19 @@ jobs:
 
       - name: Deploy to AWS with SST
         run: pnpm run deploy
-      # name: Install AWS Creds
 
-      # name: Set SST Config Secret
+      - name: Install AWS Creds
+        run: |
+          mkdir -p ~/.aws
+          echo "[defaults]" > ~/.aws/credentials
+          echo "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID}}" >> ~/.aws/credentials
+          echo "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+      
+      - name: Set SST Config Secret
+        run: npx sst secrets set COMMIT_SHA '${{ github.sha }}' --stage production
 
-      # name: pnpm run deploy
+      - name: Deploy to AWS with SST
+        run: pnpm run deploy
+
 
 
