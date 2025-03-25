@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import validator from "validator"
+// import validator from "validator"
+import {z as zod} from "zod"
+import { fromZodError } from 'zod-validation-error';
 import * as db from '@/app/lib/db';
 import * as schema from '@/app/lib/schema';
 
@@ -14,11 +16,21 @@ export async function POST(request){ // HTTP POST
     return NextResponse.json({ message: "Invalid request" }, { status: 415 })
   }
   const data = await request.json();
-  const parsedData = await schema.insertLeadTableSchema.parse(data);
-  console.log(parsedData);
-  const { email } = data;
-  const isValidEmail = validator.isEmail(email);
-  if(!isValidEmail){
+  let parsedData = {}
+  try {
+    parsedData = await schema.insertLeadTableSchema.parse(data);
+  } catch (error) {
+    if(error instanceof zod.ZodError){
+      const validationError = fromZodError(error)
+      return NextResponse.json({ errorList: validationError }, { status: 400 });
+    }
+    console.log(error)
+    return NextResponse.json({ message: `Some Server Error ${error}` }, { status: 500 });
+  }
+  console.log(parsedData)
+  const { email } = parsedData;
+  // const isValidEmail = validator.isEmail(email);
+  if(!email){
     return NextResponse.json({ message: "A valid eamil is required" }, { status: 400 });
   }
   const dbNow = await db.dbNow()

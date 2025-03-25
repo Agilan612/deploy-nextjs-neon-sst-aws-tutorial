@@ -1,5 +1,5 @@
 import { serial, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
-
+import validator from "validator"
 import { createInsertSchema } from 'drizzle-zod';
 
 export const LeadTable = pgTable("leads", {
@@ -11,4 +11,11 @@ export const LeadTable = pgTable("leads", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertLeadTableSchema = createInsertSchema(LeadTable);
+export const insertLeadTableSchema = createInsertSchema(LeadTable, {
+  email: (schema) => schema.email.email().min(4).refine((val) => { 
+    !validator.contains(val, "gamil.com")}, {
+    message: "Email must not be gmail."
+  }),
+  firstName: (schema) => schema.firstName.min(2).max(150).optional(0),
+  lastName: (schema) => schema.lastName.min(2).max(150).optional(0),
+});

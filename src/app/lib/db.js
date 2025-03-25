@@ -22,9 +22,9 @@ export async function dbNow() {
   return
 }
 
-export async function addLead() {
+export async function addLead({email}) {
   const db = await dbClient(false);
-  const dbResult = await db.insert(schema.LeadTable).values({ email: "abc" }).returning({ timestamp: schema.LeadTable.createdAt })
+  const dbResult = await db.insert(schema.LeadTable).values({ email: email }).returning({ timestamp: schema.LeadTable.createdAt })
   if(dbResult.length === 1){
     return dbResult[0].timestamp
   }
