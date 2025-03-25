@@ -14,7 +14,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "18.x"
-      # - run: npm ci
-      # - run: npm test
+      - name: Install Pnpm
+        run: npm install -g pnpm
+
+      - name: Install projects deps
+        run: pnpm install
+
+      # name: Install AWS Creds
+
+      # name: Set SST Config Secret
+
+      # name: pnpm run deploy
 
 
