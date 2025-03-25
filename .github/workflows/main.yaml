@@ -43,7 +43,8 @@ jobs:
           echo "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
       
       - name: Set SST Config Secret
-        run: npx sst secrets set COMMIT_SHA '${{ github.sha }}' --stage production
+        run: |
+          npx sst secrets set COMMIT_SHA '${{ github.sha }}' --stage production
 
       - name: Deploy to AWS with SST
         run: pnpm run deploy
