@@ -1,5 +1,7 @@
 import { serial, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
+import { createInsertSchema } from 'drizzle-zod';
+
 export const LeadTable = pgTable("leads", {
   id: serial("id").primaryKey().notNull(),
   email: text('email').notNull(),
@@ -8,3 +10,5 @@ export const LeadTable = pgTable("leads", {
   description: text("description"),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const insertLeadTableSchema = createInsertSchema(LeadTable);
