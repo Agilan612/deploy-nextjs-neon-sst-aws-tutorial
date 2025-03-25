@@ -61,3 +61,10 @@ jobs:
       - name: Clean Up AWS Profile
         run: |
           rm -rf ~/.aws
+
+      - name: Create Pull Request to Production
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run:
+          gh pr create --base production --head main --title "Auto- ${{ github.event.head_commit.message }}" --body "Auto PR from Stage Release"
